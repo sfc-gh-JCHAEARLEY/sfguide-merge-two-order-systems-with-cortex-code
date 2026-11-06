@@ -31,7 +31,7 @@ Open it in Snowsight as a **Git-backed workspace** (**Projects** » **Workspaces
 
 ## Clean up
 
-1. Delete your lab workspace in **Projects** » **Workspaces**. This also stops the dashboard preview.
+1. Delete your lab workspace in **Projects** » **Workspaces**, and the SQL file you created in **My Workspace** for the API integration.
 2. Run:
 
 ```sql
@@ -39,7 +39,7 @@ USE ROLE ACCOUNTADMIN;
 DROP DATABASE IF EXISTS MERGER_DB;   -- also drops a deployed dashboard
 DROP WAREHOUSE IF EXISTS MERGER_WH;
 DROP ROLE IF EXISTS MERGER_ROLE;
-DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;
+DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;   -- the Git API integration created for this lab
 ```
 
 ## License
