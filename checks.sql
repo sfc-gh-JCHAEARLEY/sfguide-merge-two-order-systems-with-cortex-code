@@ -3,7 +3,8 @@
 --
 -- Run each CHECK block when the guide tells you to. Every row should say PASS.
 -- Each block sets its own role and warehouse, so you can run any block on its own.
--- CHECK 4 fails on purpose until you fix the morning-after break.
+-- CHECK 4 fails on purpose until you fix the morning-after break. Right after
+-- you re-run setup.sql, it errors instead, because the pipeline doesn't exist yet.
 -- These checks read the tables, not CoCo's chat output, so they tell you
 -- whether the data is right no matter how CoCo wrote the SQL.
 -- =============================================================================
@@ -80,7 +81,7 @@ FROM (
          (SELECT STATE FROM TABLE(MERGER_DB.INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY(
                    NAME => 'MERGER_DB.ANALYTICS.DAILY_REVENUE'))
           WHERE STATE NOT IN ('SCHEDULED', 'EXECUTING')
-            -- ignore history left over from earlier runs of setup.sql
+            -- ignore refresh history left over from an earlier, replaced MERGER_DB
             AND DATA_TIMESTAMP >= (SELECT CREATED FROM MERGER_DB.INFORMATION_SCHEMA.DATABASES
                                    WHERE DATABASE_NAME = 'MERGER_DB')
           ORDER BY DATA_TIMESTAMP DESC LIMIT 1)

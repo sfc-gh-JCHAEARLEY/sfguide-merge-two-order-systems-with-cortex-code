@@ -6,7 +6,7 @@ A coffee chain just bought a rival, and the two order systems disagree on everyt
 
 ## How to use this repo
 
-Open it in Snowsight as a **Git-backed workspace** (**Projects** » **Workspaces**, then **From Git repository** in the **Workspaces** menu) and follow the guide. The guide shows the one SQL statement to run first, which creates the API integration the workspace needs. You run the files in this order:
+Open it in Snowsight as a **Git-backed workspace** (**Projects** » **Workspaces**, then **From Git repository** in the **Workspaces** menu) and follow the guide. Before that, the guide has you run a short SQL snippet that creates the API integration the workspace needs. You run the files in this order:
 
 | File | When |
 |------|------|
@@ -31,8 +31,7 @@ Open it in Snowsight as a **Git-backed workspace** (**Projects** » **Workspaces
 
 ## Clean up
 
-1. Delete your lab workspace in **Projects** » **Workspaces**, and the SQL file you created in **My Workspace** for the API integration.
-2. Run:
+1. Open the SQL file you created in **My Workspace** for the API integration, replace its contents with the statements below, and run them:
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -41,6 +40,8 @@ DROP WAREHOUSE IF EXISTS MERGER_WH;
 DROP ROLE IF EXISTS MERGER_ROLE;
 DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;   -- the Git API integration created for this lab
 ```
+
+2. Delete your lab workspace in **Projects** » **Workspaces**, then the SQL file in **My Workspace**.
 
 ## License
 

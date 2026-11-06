@@ -41,6 +41,6 @@ SELECT
 FROM g
 JOIN menu m ON m.item_idx = MOD(ABS(HASH(g.n, 'pos_item')), 6);
 
--- 3. The CEO opens the dashboard, which asks for fresh numbers.
+-- 3. The CEO asks for fresh numbers.
 --    Expected: this statement FAILS.
 ALTER DYNAMIC TABLE MERGER_DB.ANALYTICS.DAILY_REVENUE REFRESH;

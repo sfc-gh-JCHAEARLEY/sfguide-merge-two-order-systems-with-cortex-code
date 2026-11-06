@@ -11,8 +11,8 @@ USE ROLE MERGER_ROLE;
 USE WAREHOUSE MERGER_WH;
 USE SCHEMA MERGER_DB.ANALYTICS;
 
--- CREATE OR ALTER keeps the existing Dynamic Table (its grants and refresh
--- history) and updates its definition. Changing the query still reinitializes it.
+-- CREATE OR ALTER keeps the existing Dynamic Table and its grants, and updates
+-- its definition. Changing the query still reinitializes it.
 CREATE OR ALTER DYNAMIC TABLE MERGER_DB.ANALYTICS.ORDERS_UNIFIED
   TARGET_LAG = DOWNSTREAM
   WAREHOUSE = MERGER_WH
