@@ -1,5 +1,5 @@
 -- =============================================================================
--- The Merger: reference fix for the Monday-morning surprise (fallback)
+-- The Merger: reference fix for the morning-after surprise (fallback)
 --
 -- The POS vendor renamed TOTAL_USD to SALE_AMOUNT_USD, so ORDERS_UNIFIED
 -- failed with "invalid identifier 'S.TOTAL_USD'" and DAILY_REVENUE was
@@ -11,8 +11,8 @@ USE ROLE MERGER_ROLE;
 USE WAREHOUSE MERGER_WH;
 USE SCHEMA MERGER_DB.ANALYTICS;
 
--- CREATE OR ALTER updates the existing definition. (CREATE OR REPLACE would
--- rebuild the table and make downstream incremental Dynamic Tables reinitialize.)
+-- CREATE OR ALTER keeps the existing Dynamic Table (its grants and refresh
+-- history) and updates its definition. Changing the query still reinitializes it.
 CREATE OR ALTER DYNAMIC TABLE MERGER_DB.ANALYTICS.ORDERS_UNIFIED
   TARGET_LAG = DOWNSTREAM
   WAREHOUSE = MERGER_WH

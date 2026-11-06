@@ -20,12 +20,15 @@ CREATE ROLE IF NOT EXISTS MERGER_ROLE
   COMMENT = 'Lab role for The Merger quickstart';
 GRANT ROLE MERGER_ROLE TO ROLE SYSADMIN;
 
-SET MY_USER = CURRENT_USER();
+-- Quoted so usernames with dots, @ signs, or lowercase letters work
+SET MY_USER = '"' || CURRENT_USER() || '"';
 GRANT ROLE MERGER_ROLE TO USER IDENTIFIER($MY_USER);
 
 -- CoCo needs a Cortex database role. Most accounts already grant CORTEX_USER
 -- to PUBLIC; granting it here makes the lab work even where that was revoked.
+-- COPILOT_USER is also required on accounts that don't have BCR-2445 yet.
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE MERGER_ROLE;
+GRANT DATABASE ROLE SNOWFLAKE.COPILOT_USER TO ROLE MERGER_ROLE;
 
 CREATE WAREHOUSE IF NOT EXISTS MERGER_WH
   WAREHOUSE_SIZE = XSMALL
@@ -34,6 +37,7 @@ CREATE WAREHOUSE IF NOT EXISTS MERGER_WH
   INITIALLY_SUSPENDED = TRUE;
 GRANT USAGE, OPERATE ON WAREHOUSE MERGER_WH TO ROLE MERGER_ROLE;
 
+-- Re-running this script resets the lab: it replaces MERGER_DB and everything in it.
 CREATE OR REPLACE DATABASE MERGER_DB;
 GRANT OWNERSHIP ON DATABASE MERGER_DB TO ROLE MERGER_ROLE;
 
@@ -173,19 +177,23 @@ orders AS (
     OBJECT_CONSTRUCT(
       'order_id',     'DG-' || LPAD(s.n::VARCHAR, 6, '0'),
       'store_code',   s.store_code,
-      'created_at',   TO_VARCHAR(
-                        CONVERT_TIMEZONE(s.timezone, 'UTC',
-                          DATEADD(second, s.sec,
-                            DATEADD(minute, s.minute_offset,
-                              DATEADD(day, s.day_offset, '2026-09-01 06:00:00'::TIMESTAMP_NTZ)))),
-                        'YYYY-MM-DD"T"HH24:MI:SS"Z"'),
+      'created_at',   TO_VARCHAR(s.created_at_utc, 'YYYY-MM-DD"T"HH24:MI:SS"Z"'),
       'channel',      IFF(MOD(s.n, 3) = 0, 'web', 'app'),
       'item',         m.item_name,
       'qty',          s.qty,
       'amount_cents', (m.price * s.qty * 100)::NUMBER(10,0)
     ) AS doc,
-    DATEADD(day, s.day_offset, '2026-09-01 12:00:00'::TIMESTAMP_NTZ) AS loaded_at
-  FROM shaped s
+    -- Each document lands a couple of minutes after the order was placed
+    DATEADD(minute, 2, s.created_at_utc) AS loaded_at
+  FROM (
+    SELECT
+      shaped.*,
+      CONVERT_TIMEZONE(timezone, 'UTC',
+        DATEADD(second, sec,
+          DATEADD(minute, minute_offset,
+            DATEADD(day, day_offset, '2026-09-01 06:00:00'::TIMESTAMP_NTZ)))) AS created_at_utc
+    FROM shaped
+  ) s
   JOIN menu m ON m.item_idx = s.item_idx
   WHERE s.keep_roll < IFF(DAYOFWEEKISO(DATEADD(day, s.day_offset, '2026-09-01'::DATE)) >= 6, 100, 80)
 )

@@ -6,12 +6,12 @@ A coffee chain just bought a rival, and the two order systems disagree on everyt
 
 ## How to use this repo
 
-Open it in Snowsight as a **Git-backed workspace** (Projects » Workspaces » Create new Git workspace) and follow the guide. You run the files in this order:
+Open it in Snowsight as a **Git-backed workspace** (**Projects** » **Workspaces**, then **From Git repository** in the **Workspaces** menu) and follow the guide. The guide shows the one SQL statement to run first, which creates the API integration the workspace needs. You run the files in this order:
 
 | File | When |
 |------|------|
-| `setup.sql` | Step 1. Creates `MERGER_ROLE`, `MERGER_WH`, `MERGER_DB`, and the source data. Run it as ACCOUNTADMIN. |
-| `checks.sql` | After each step. Run the matching CHECK block; every row should say PASS. |
+| `setup.sql` | Step 1. Creates `MERGER_ROLE`, `MERGER_WH`, `MERGER_DB`, and the source data. Run it as ACCOUNTADMIN. Re-running it resets the lab. |
+| `checks.sql` | After each step. Run the matching CHECK block; every row should say PASS. CHECK 4 fails on purpose until you fix the break. |
 | `break_batch.sql` | Step 4. Renames a POS column, lands a new batch, and forces a refresh that fails on purpose. |
 
 `solutions/` holds reference answers if you fall behind or want to compare against what CoCo built:
@@ -31,11 +31,15 @@ Open it in Snowsight as a **Git-backed workspace** (Projects » Workspaces » Cr
 
 ## Clean up
 
+1. Delete your lab workspace in **Projects** » **Workspaces**. This also stops the dashboard preview.
+2. Run:
+
 ```sql
 USE ROLE ACCOUNTADMIN;
-DROP DATABASE IF EXISTS MERGER_DB;
+DROP DATABASE IF EXISTS MERGER_DB;   -- also drops a deployed dashboard
 DROP WAREHOUSE IF EXISTS MERGER_WH;
 DROP ROLE IF EXISTS MERGER_ROLE;
+DROP API INTEGRATION IF EXISTS GITHUB_MERGER_LAB;
 ```
 
 ## License

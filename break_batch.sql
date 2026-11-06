@@ -1,9 +1,9 @@
 -- =============================================================================
--- The Merger: the Monday-morning surprise
+-- The Merger: the morning-after surprise
 --
--- Northbound's POS vendor shipped a "minor" update over the weekend. The new
--- export renamed TOTAL_USD to SALE_AMOUNT_USD, and the first batch in the new
--- format (Tuesday, Sept 29) just landed.
+-- Northbound's POS vendor shipped a "minor" update. The new export renamed
+-- TOTAL_USD to SALE_AMOUNT_USD, and the first batch in the new format
+-- (Tuesday, Sept 29) landed overnight.
 --
 -- Run this whole script. The LAST statement is expected to FAIL.
 -- That failure is the point: your job is to have CoCo find and fix it.

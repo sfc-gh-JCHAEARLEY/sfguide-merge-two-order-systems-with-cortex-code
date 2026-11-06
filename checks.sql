@@ -1,17 +1,18 @@
 -- =============================================================================
 -- The Merger: checkpoints
 --
--- Run each CHECK when the guide tells you to. Every row should say PASS.
+-- Run each CHECK block when the guide tells you to. Every row should say PASS.
+-- Each block sets its own role and warehouse, so you can run any block on its own.
+-- CHECK 4 fails on purpose until you fix the morning-after break.
 -- These checks read the tables, not CoCo's chat output, so they tell you
 -- whether the data is right no matter how CoCo wrote the SQL.
 -- =============================================================================
 
-USE ROLE MERGER_ROLE;
-USE WAREHOUSE MERGER_WH;
-
 -- -----------------------------------------------------------------------------
 -- CHECK 1 - after setup.sql
 -- -----------------------------------------------------------------------------
+USE ROLE MERGER_ROLE;
+USE WAREHOUSE MERGER_WH;
 SELECT check_name, expected, actual, IFF(expected = actual, 'PASS', 'FAIL') AS result
 FROM (
   SELECT 'STORE_CROSSWALK rows' AS check_name, 10   AS expected, (SELECT COUNT(*) FROM MERGER_DB.RAW.STORE_CROSSWALK) AS actual
@@ -23,6 +24,8 @@ FROM (
 -- CHECK 2 - after "Discover the Data"
 -- Compare these with what CoCo reported about the two sources.
 -- -----------------------------------------------------------------------------
+USE ROLE MERGER_ROLE;
+USE WAREHOUSE MERGER_WH;
 SELECT check_name, expected, actual, IFF(expected = actual, 'PASS', 'FAIL') AS result
 FROM (
   SELECT 'Unique web orders' AS check_name, 3040 AS expected,
@@ -39,6 +42,8 @@ FROM (
 -- -----------------------------------------------------------------------------
 -- CHECK 3 - after "Build the Pipeline"
 -- -----------------------------------------------------------------------------
+USE ROLE MERGER_ROLE;
+USE WAREHOUSE MERGER_WH;
 SELECT check_name, expected, actual, IFF(expected = actual, 'PASS', 'FAIL') AS result
 FROM (
   SELECT 'ORDERS_UNIFIED rows' AS check_name, '7256' AS expected,
@@ -55,8 +60,10 @@ FROM (
 );
 
 -- -----------------------------------------------------------------------------
--- CHECK 4 - after "The Monday-Morning Break" is fixed
+-- CHECK 4 - after "The Morning-After Break" is fixed
 -- -----------------------------------------------------------------------------
+USE ROLE MERGER_ROLE;
+USE WAREHOUSE MERGER_WH;
 SELECT check_name, expected, actual, IFF(expected = actual, 'PASS', 'FAIL') AS result
 FROM (
   SELECT 'ORDERS_UNIFIED rows' AS check_name, '7406' AS expected,
